@@ -8,7 +8,7 @@ public class ExecuteEngine {
     private static final int tickSpeed = 1000;
 
     public static void main(String[] args) {
-        Window window = new Window(1920, 1200, new Camera(new Vertex(0, 0, 0), new Vertex(0 * Window.degToRad, 0 * Window.degToRad, 0), 90, 0.1f));
+        Window window = new Window( new Camera(new Vertex(0, 0, 0), new Vertex(0 * Window.degToRad, 0 * Window.degToRad, 0), 1000, 700, 90, 0.1f));
         StartWindow(window);
 
         long time = 0;
@@ -73,12 +73,32 @@ public class ExecuteEngine {
                     window.camera.rotation.z += anglePas * Window.degToRad;
                 if (Keyboard.isKeyPressed(KeyEvent.VK_L))
                     window.camera.rotation.z -= anglePas * Window.degToRad;
+                if (Keyboard.isKeyPressed(KeyEvent.VK_UP) || Keyboard.isKeyPressed(KeyEvent.VK_DOWN))
+                    window.camera.rotation.y = window.camera.rotation.y % (2 * Math.PI);
+                if (Keyboard.isKeyPressed(KeyEvent.VK_LEFT) || Keyboard.isKeyPressed(KeyEvent.VK_RIGHT))
+                    window.camera.rotation.x = window.camera.rotation.x % (2 * Math.PI);
+                if (Keyboard.isKeyPressed(KeyEvent.VK_J) || Keyboard.isKeyPressed(KeyEvent.VK_L))
+                    window.camera.rotation.z = window.camera.rotation.z % (2 * Math.PI);
+
                 if (Keyboard.isKeyPressed(KeyEvent.VK_ENTER)) {
                     if (System.currentTimeMillis() - time >= 100) {
                         window.camera.local = !window.camera.local;
                         time = System.currentTimeMillis();
                     }
                 }
+
+                if (window.camera.rotation.x > Math.PI)
+                    window.camera.rotation.x -= 2 * Math.PI;
+                if (window.camera.rotation.y > Math.PI)
+                    window.camera.rotation.y -= 2 * Math.PI;
+                if (window.camera.rotation.z > Math.PI)
+                    window.camera.rotation.z -= 2 * Math.PI;
+                if (window.camera.rotation.x < -Math.PI)
+                    window.camera.rotation.x += 2 * Math.PI;
+                if (window.camera.rotation.y < -Math.PI)
+                    window.camera.rotation.y += 2 * Math.PI;
+                if (window.camera.rotation.z < -Math.PI)
+                    window.camera.rotation.z += 2 * Math.PI;
             }
 
             if (System.currentTimeMillis() - lastFrame >= 1000/fps) {
@@ -148,7 +168,7 @@ public class ExecuteEngine {
         ArrayList<Vertex> vertices = new ArrayList<>();
         ArrayList<Edge> edges = new ArrayList<>();
 
-        for (int i = -10; i <= 10; i++) {
+        /*for (int i = -10; i <= 10; i++) {
             for (int j = -10; j <= 10; j++) {
                 Vertex vertex = new Vertex(i, 0, j);
                 vertices.add(vertex);
@@ -163,7 +183,7 @@ public class ExecuteEngine {
             }
             edges.add(new Edge(vertices.get((i+1)*21 - 1), vertices.get((i+2)*21 - 1), Color.GREEN));
             edges.add(new Edge(vertices.get(20 * 21 + i), vertices.get(20*21 + i + 1), Color.GREEN));
-        }
+        }*/
 
         vertices.add(v1);
         vertices.add(v2);
@@ -173,12 +193,6 @@ public class ExecuteEngine {
         vertices.add(v6);
         vertices.add(v7);
         vertices.add(v8);
-
-        vertices.add(v9);
-        vertices.add(v10);
-        vertices.add(v11);
-        vertices.add(v12);
-        vertices.add(v13);
 
         edges.add(e1);
         edges.add(e2);
@@ -192,15 +206,6 @@ public class ExecuteEngine {
         edges.add(e10);
         edges.add(e11);
         edges.add(e12);
-
-        edges.add(e13);
-        edges.add(e14);
-        edges.add(e15);
-        edges.add(e16);
-        edges.add(e17);
-        edges.add(e18);
-        edges.add(e19);
-        edges.add(e20);
 
         window.vertices = vertices;
         window.edges = edges;
