@@ -10,7 +10,6 @@ public class Window {
     public Camera camera;
     public final BufferedImage image;
     public JFrame frame;
-    private double a, b, c, d;
 
     public Window(Camera camera) {
         this.camera = camera;
@@ -36,25 +35,26 @@ public class Window {
 
    public void DrawFrame() {
        EraseWindow();
-       int a = 0;
+       double cosRotationX = Math.cos(camera.rotation.x);
+       double sinRotationX = Math.sin(camera.rotation.x);
+       double cosRotationY = Math.cos(camera.rotation.y);
+       double sinRotationY = Math.sin(camera.rotation.y);
+       double cameraBarycenterX = cosRotationX * cosRotationY * camera.near;
+       double cameraBarycenterY = sinRotationY * camera.near;
+       double cameraBarycenterZ = sinRotationX * cosRotationY * camera.near;
+       Vertex cameraToBarycenter = new Vertex(camera.position.x + cameraBarycenterX,camera.position.y +  cameraBarycenterY, camera.position.z + cameraBarycenterZ);
        for (Vertex vertex : vertices) {
-           a++;
-           double angleYPoint = Math.atan((vertex.y - camera.position.y) / ((vertex.x - camera.position.x) * Math.cos(camera.rotation.x) + (vertex.z - camera.position.z) * Math.sin(camera.rotation.x))) - camera.rotation.y;
+           double angleYPoint = Math.atan2((vertex.y - camera.position.y), ((vertex.x - camera.position.x + ((vertex.x - camera.position.x) == 0 ? 1e-6 : 0)) * cosRotationX + (vertex.z - camera.position.z) * sinRotationX)) - camera.rotation.y;
            double posY = camera.near * Math.tan(angleYPoint);
            int y = (int) (camera.height / 2 - posY * camera.height / camera.heightInSpace);
 
            double nearYOnXZPlan = Math.sqrt(Math.pow(camera.near, 2) + Math.pow(posY, 2)) * Math.cos(angleYPoint + camera.rotation.y);
-           double angleXPoint = Math.atan((vertex.z - camera.position.z) / (vertex.x - camera.position.x)) - camera.rotation.x;
+           double angleXPoint = Math.atan((vertex.z - camera.position.z) / (vertex.x - camera.position.x + ((vertex.x - camera.position.x) == 0 ? 1e-6 : 0))) - camera.rotation.x;
            double posX = Math.tan(angleXPoint) * nearYOnXZPlan;
            int x = (int) (camera.width / 2 - posX * camera.width / camera.widthInSpace);
 
+           vertex.behindScreen = ProdScal(camera.position, cameraToBarycenter, vertex) < 0;
            vertex.coords = new Coords(x, y);
-
-           Vertex p1 = new Vertex(camera.position.x, 0, camera.position.z);
-           Vertex p2 = new Vertex(camera.position.x + Math.cos(camera.rotation.x), 0, camera.position.z + Math.sin(camera.rotation.x));
-           double angleBehind = Math.acos(ProdScal(p1, p2, vertex) / (Distance(p1, p2) * Distance(p1, vertex)));
-
-           vertex.behindScreen = angleBehind > Math.PI/2;
        }
 
        for (Edge edge : edges) {

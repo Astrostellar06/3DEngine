@@ -168,7 +168,7 @@ public class ExecuteEngine {
         ArrayList<Vertex> vertices = new ArrayList<>();
         ArrayList<Edge> edges = new ArrayList<>();
 
-        /*for (int i = -10; i <= 10; i++) {
+        for (int i = -10; i <= 10; i++) {
             for (int j = -10; j <= 10; j++) {
                 Vertex vertex = new Vertex(i, 0, j);
                 vertices.add(vertex);
@@ -183,7 +183,7 @@ public class ExecuteEngine {
             }
             edges.add(new Edge(vertices.get((i+1)*21 - 1), vertices.get((i+2)*21 - 1), Color.GREEN));
             edges.add(new Edge(vertices.get(20 * 21 + i), vertices.get(20*21 + i + 1), Color.GREEN));
-        }*/
+        }
 
         vertices.add(v1);
         vertices.add(v2);
