@@ -44,6 +44,9 @@ public class Window {
        double cameraBarycenterZ = sinRotationX * cosRotationY * camera.near;
        Vertex cameraToBarycenter = new Vertex(camera.position.x + cameraBarycenterX,camera.position.y +  cameraBarycenterY, camera.position.z + cameraBarycenterZ);
        for (Vertex vertex : vertices) {
+           vertex.behindScreen = ProdScal(camera.position, cameraToBarycenter, vertex) < 0;
+           if (vertex.behindScreen) continue;
+
            double angleYPoint = Math.atan2((vertex.y - camera.position.y), ((vertex.x - camera.position.x + ((vertex.x - camera.position.x) == 0 ? 1e-6 : 0)) * cosRotationX + (vertex.z - camera.position.z) * sinRotationX)) - camera.rotation.y;
            double posY = camera.near * Math.tan(angleYPoint);
            int y = (int) (camera.height / 2 - posY * camera.height / camera.heightInSpace);
@@ -53,7 +56,6 @@ public class Window {
            double posX = Math.tan(angleXPoint) * nearYOnXZPlan;
            int x = (int) (camera.width / 2 - posX * camera.width / camera.widthInSpace);
 
-           vertex.behindScreen = ProdScal(camera.position, cameraToBarycenter, vertex) < 0;
            vertex.coords = new Coords(x, y);
        }
 
